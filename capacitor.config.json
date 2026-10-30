@@ -1,0 +1,8 @@
+{
+  "appId": "com.shambadirect.marketplace",
+  "appName": "Shamba Direct",
+  "webDir": "public",
+  "server": {
+    "androidScheme": "https"
+  }
+}

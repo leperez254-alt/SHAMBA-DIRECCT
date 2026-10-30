@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f7f1">
+    <title>Shamba Direct — Fresh from the farm</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="api-config.js"></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Shamba Direct home"><span class="brand-mark" aria-hidden="true">S</span><span>shamba<span class="brand-light">direct</span></span></a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="active" href="#market">Marketplace</a>
+        <a href="#farmers">Farmers</a>
+        <a href="#farmer-tools">Farmer tools</a>
+        <a href="#orders">Orders</a>
+        <a href="#admin">Admin</a>
+      </nav>
+      <div class="header-actions">
+        <span class="delivery-location"><span aria-hidden="true">⌖</span> Delivering to <strong id="header-location">Nairobi</strong></span>
+        <span class="backend-status" id="backend-status">Connecting to marketplace…</span>
+        <button class="header-account-button" id="account-toggle" type="button">My account</button>
+        <button class="header-account-button" id="accessibility-toggle" type="button" aria-pressed="false">Larger text</button>
+        <button class="header-account-button" id="language-toggle" type="button" aria-label="Switch language">Kiswahili</button>
+        <button class="notification-button" id="notification-toggle" type="button" aria-label="Notifications">🔔<span id="notification-count" class="notification-count" hidden></span></button>
+        <button class="cart-button" id="cart-toggle" type="button" aria-label="Open basket"><span>Basket</span><span class="cart-count" id="cart-count">0</span></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-dot"></span> A better way to buy fresh</p>
+          <h1>Good food.<br><span>Good for farmers.</span></h1>
+          <p class="hero-description">Shop fresh harvests directly from local farmers. Fair prices, honest origins, delivered to your door.</p>
+          <a class="text-link" href="#market">Explore the marketplace <span aria-hidden="true">→</span></a>
+        </div>
+        <figure class="hero-art">
+          <img class="hero-photo" src="assets/farm-hero.jpg" alt="Green cultivated fields stretching across the countryside" width="1400" height="788" fetchpriority="high">
+          <figcaption class="hero-photo-credit">Farm landscape · <a href="https://unsplash.com/license" target="_blank" rel="noreferrer">Unsplash</a></figcaption>
+        </figure>
+      </section>
+
+      <section class="market-section" id="market">
+        <div class="section-heading"><div><p class="eyebrow">The marketplace</p><h2>Fresh picks for you</h2></div><p class="section-note">Every order supports a local farmer.</p></div>
+        <form class="search-bar" id="search-form" role="search">
+          <label class="search-input-wrap"><span class="search-icon" aria-hidden="true">⌕</span><span class="visually-hidden">Search products or farms</span><input id="search-input" type="search" placeholder="Search vegetables, grains, farms..." autocomplete="off"></label>
+          <button class="button button-dark" type="submit">Search</button>
+        </form>
+        <div class="market-controls">
+          <div class="category-list" id="category-list" aria-label="Filter by category"></div>
+          <label class="sort-control"><span>Sort by</span><select id="sort-select" aria-label="Sort products"><option value="recommended">Recommended</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
+        </div>
+        <div class="advanced-filters">
+          <label>Max price <span class="filter-value" id="price-value">Any</span><input id="price-filter" type="range" min="0" max="2000" step="50" value="2000"></label>
+          <label>Farm location<select id="location-filter"><option value="">All locations</option></select></label>
+          <label>Farming practice<select id="practice-filter"><option value="">All practices</option><option value="Organic">Organic</option><option value="Regenerative">Regenerative</option><option value="Integrated">Integrated</option></select></label>
+          <label class="check-filter"><input id="stock-filter" type="checkbox"> In stock only</label>
+        </div>
+        <div class="results-summary"><p id="results-count" aria-live="polite"></p><span class="freshness"><span aria-hidden="true">✦</span> Freshly listed</span></div>
+        <div class="product-grid" id="product-grid"></div>
+        <div class="empty-state" id="empty-state" hidden><span aria-hidden="true">🌱</span><h3>No harvests found</h3><p>Try another search or choose different filters.</p><button class="button button-outline" id="clear-filters" type="button">Clear filters</button></div>
+      </section>
+
+      <section class="content-section" id="farmers">
+        <div class="section-heading"><div><p class="eyebrow">Know your grower</p><h2>Meet the farmers</h2></div><p class="section-note">Local people, growing good food.</p></div>
+        <div class="farmer-grid" id="farmer-grid"></div>
+      </section>
+
+      <section class="content-section market-insights" id="market-insights">
+        <div class="section-heading"><div><p class="eyebrow">Plan your shopping</p><h2>Seasonal crops & price guide</h2></div><span class="demo-label">Illustrative sample data</span></div>
+        <div class="insight-controls">
+          <label>Choose a crop<select id="insight-product"></select></label>
+          <label>Farm area<select id="insight-location"></select></label>
+        </div>
+        <div id="season-calendar" class="season-calendar" aria-live="polite"></div>
+        <div id="price-history" class="price-history"></div>
+      </section>
+
+      <section class="content-section soft-section bulk-orders" id="bulk-orders">
+        <div><p class="eyebrow">For shops, restaurants & groups</p><h2>Buying in bulk?</h2><p>Send a local demo enquiry to request larger quantities from a farmer. No message is sent outside this browser.</p></div>
+        <form id="bulk-order-form" class="support-form">
+          <label>Your name<input name="name" maxlength="80" required></label>
+          <label>Business or group<input name="business" maxlength="100" required></label>
+          <label>Crop / product<input name="product" maxlength="80" required></label>
+          <label>Quantity and unit<input name="quantity" maxlength="80" placeholder="For example: 100 kg per week" required></label>
+          <label>Preferred farmer<select id="bulk-farmer" name="farmer" required></select></label>
+          <button class="button button-dark" type="submit">Save bulk enquiry</button>
+        </form>
+        <div class="bulk-enquiries" id="bulk-enquiries"></div>
+      </section>
+
+      <section class="content-section soft-section" id="orders">
+        <div class="section-heading"><div><p class="eyebrow">Your purchases</p><h2>Order history & tracking</h2></div><span class="demo-label">Saved on this device</span></div>
+        <div id="order-list" class="order-list"></div>
+        <div class="address-book"><h3>Saved delivery addresses</h3><div id="saved-address-list"></div></div>
+      </section>
+
+      <section class="content-section farmer-reports" id="farmer-reports">
+        <div class="section-heading"><div><p class="eyebrow">For your farm</p><h2>Sales report</h2></div><span class="demo-label">Local sample data</span></div>
+        <p>Download your saved demo orders and earnings as a CSV report. Real payouts and accounting are not connected.</p>
+        <button class="button button-outline" id="download-sales-report" type="button">Download sales report</button>
+      </section>
+
+      <section class="content-section" id="farmer-tools">
+        <div class="section-heading"><div><p class="eyebrow">For our growers</p><h2>Farmer dashboard</h2></div><span class="demo-label">Demo tools · local only</span></div>
+        <div class="dashboard-grid" id="farmer-dashboard"></div>
+        <details class="tool-panel">
+          <summary>Bulk update listings (CSV)</summary>
+          <p>Paste rows in this format: <code>product-id,price,stock</code>. This demo updates products in this browser only.</p>
+          <form id="bulk-form"><label class="visually-hidden" for="bulk-input">CSV product updates</label><textarea id="bulk-input" rows="4" placeholder="tomatoes,190,24&#10;spinach,130,18"></textarea><button class="button button-dark" type="submit">Apply updates</button></form>
+        </details>
+      </section>
+
+      <section class="content-section" id="subscriptions">
+        <div class="section-heading"><div><p class="eyebrow">Plans for every partner</p><h2>Choose a monthly package</h2></div><span class="demo-label">Monthly plans</span></div>
+        <label class="plan-account-type">Select plan type<select id="plan-account-type"><option value="farmer">Farmer</option><option value="business">Miller / bulk buyer</option></select></label>
+        <div class="plan-grid" id="plan-grid"></div>
+        <p class="muted-note" id="subscription-note">Subscription availability depends on the live marketplace connection.</p>
+      </section>
+
+      <section class="content-section soft-section" id="admin">
+        <div class="section-heading"><div><p class="eyebrow">Marketplace operations</p><h2>Admin review queue</h2></div><span class="demo-label">Local demo · not identity verification</span></div>
+        <div class="admin-grid" id="admin-grid"></div>
+      </section>
+
+      <section class="content-section support-section" id="support">
+        <div><p class="eyebrow">We're here to help</p><h2>Customer support</h2><p>Report an issue with a demo order. No message is sent outside this browser.</p></div>
+        <form id="support-form" class="support-form">
+          <label>Your order<select id="support-order" name="order" required></select></label>
+          <label>What happened?<select name="issue" required><option value="">Choose an issue</option><option>Missing item</option><option>Damaged produce</option><option>Late delivery</option><option>Other question</option></select></label>
+          <label>Details<textarea name="details" rows="3" required maxlength="500" placeholder="Tell us a little more"></textarea></label>
+          <button class="button button-dark" type="submit">Save support report</button>
+        </form>
+        <div class="support-reports" id="support-reports"></div>
+      </section>
+
+      <section class="how-section" id="how-it-works">
+        <div class="how-intro"><p class="eyebrow">Simple by nature</p><h2>From their shamba<br>to your table.</h2></div>
+        <div class="how-step"><span class="step-number">01</span><h3>Choose your harvest</h3><p>Browse seasonal produce and discover the people who grow it.</p></div>
+        <div class="how-step"><span class="step-number">02</span><h3>Order direct</h3><p>Buy what you need at clear prices, straight from the source.</p></div>
+        <div class="how-step"><span class="step-number">03</span><h3>Enjoy the good</h3><p>Get fresh food delivered while more value stays with farmers.</p></div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><a class="brand brand-footer" href="#"><span class="brand-mark" aria-hidden="true">S</span><span>shamba<span class="brand-light">direct</span></span></a><p>Good food grows good communities.</p><a class="footer-support" href="tel:+254718031596">Support: 0718 031 596</a><a class="footer-support" href="terms.html">Terms</a><a class="footer-support" href="privacy.html">Privacy</a><span>© 2026 Shamba Direct</span></footer>
+
+    <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+    <aside class="cart-drawer" id="cart-drawer" aria-labelledby="cart-title" aria-hidden="true">
+      <div class="drawer-heading"><div><p class="eyebrow">Your harvest</p><h2 id="cart-title">Your basket</h2></div><button class="icon-button" id="cart-close" type="button" aria-label="Close basket">×</button></div>
+      <div class="cart-items" id="cart-items"></div>
+      <div class="cart-empty" id="cart-empty"><span aria-hidden="true">🧺</span><p>Your basket is ready for something fresh.</p></div>
+      <div class="cart-footer"><div class="cart-total"><span>Subtotal</span><strong id="cart-total">KSh 0</strong></div><p class="checkout-note">Demo checkout only. No payment is processed.</p><button class="button button-dark checkout-button" id="checkout-button" type="button" disabled>Continue to checkout</button></div>
+    </aside>
+
+    <dialog class="app-dialog" id="app-dialog" aria-labelledby="dialog-title">
+      <div class="dialog-heading"><div><p class="eyebrow" id="dialog-eyebrow">Shamba Direct</p><h2 id="dialog-title">Details</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Close dialog">×</button></div>
+      <div class="dialog-content" id="dialog-content"></div>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
